@@ -185,6 +185,44 @@ sub non_supported {
 1;
 ...
 
+    $self->write_file('app.psgi', <<'...', {header => $self->psgi_header});
+<% $header %>
+use <% $module %>::PC;
+use Plack::Util;
+use Plack::Builder;
+use HTTP::MobileAgent;
+use Plack::Request;
+
+my $mobile = Plack::Util::load_psgi('mobile.psgi');
+my $pc = Plack::Util::load_psgi('pc.psgi');
+builder {
+    mount '/admin/' => Plack::Util::load_psgi('admin.psgi');
+    mount '/m/' => sub {
+		my $env = shift;
+		if (!HTTP::MobileAgent->new($env->{HTTP_USER_AGENT})->is_non_mobile) {
+			return $mobile->($env);
+		} else {
+			my $req = Plack::Request->new($env);
+			my $uri = $req->uri;
+			my $path = $uri->path;
+			$uri->path('/');
+			return [302, ['Location' => $uri->as_string], []];
+		}
+	};
+    mount '/' => sub {
+		my $env = shift;
+		if (HTTP::MobileAgent->new($env->{HTTP_USER_AGENT})->is_non_mobile) {
+			return $pc->($env);
+		} else {
+			my $req = Plack::Request->new($env);
+			my $uri = $req->uri;
+			$uri->path('/m/');
+			return [302, ['Location' => $uri->as_string], []];
+		}
+	};
+};
+...
+
     $self->write_file('mobile.psgi', <<'...', {header => $self->psgi_header});
 <% $header %>
 use <% $module %>::Mobile;
@@ -276,6 +314,54 @@ test_psgi(
 done_testing;
 
 ...
+
+	$self->write_file('t/05_routing_mobile.t', <<'...');
+use strict;
+use warnings;
+use utf8;
+use Test::More;
+use Plack::Test;
+use Plack::Util;
+use t::Util;
+use LWP::Protocol::PSGI;
+use LWP::UserAgent;
+
+my $app = Plack::Util::load_psgi('app.psgi');
+LWP::Protocol::PSGI->register($app);
+
+subtest 'pc browser' => sub {
+	my $ua = LWP::UserAgent->new(max_redirect => 0);
+
+	subtest 'cannnot see mobile page' => sub {
+		my $res = $ua->get('http://localhost/m/');
+		is($res->code, 302) or diag $res->as_string;
+		is($res->header('Location'), 'http://localhost/');
+	};
+	subtest 'can see pc page' => sub {
+		my $res = $ua->get('http://localhost/');
+		is($res->code, 200) or diag substr($res->as_string, 0, 512);
+	};
+};
+
+subtest 'mobile browser' => sub {
+    my $ua = LWP::UserAgent->new(
+        max_redirect => 0,
+        agent        => 'KDDI-CA21 UP.Browser/6.0.6 (GUI) MMP/1.1'
+    );
+	subtest 'cannnot see pc page' => sub {
+		my $res = $ua->get('http://localhost/');
+		is($res->code, 302) or diag substr($res->as_string, 0, 512);
+		is($res->header('Location'), 'http://localhost/m/');
+	};
+	subtest 'can see mobile page' => sub {
+		my $res = $ua->get('http://localhost/m/');
+		is($res->code, 200) or diag substr($res->as_string, 0, 512);
+	};
+};
+
+done_testing;
+...
+
 	$self->write_file('t/00_compile_mobile.t', <<'...');
 use strict;
 use warnings;
@@ -302,6 +388,8 @@ sub create_makefile_pl {
 			'HTTP::Session::Store::DBI' => '0.02',
 			'HTTP::Session' => 0,
 			'Amon2::Plugin::Web::HTTPSession' => 0,
+			'LWP::Protocol::PSGI' => 0,
+			'LWP::UserAgent' => 6,
         },
     );
 }
