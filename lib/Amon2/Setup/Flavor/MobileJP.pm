@@ -79,6 +79,28 @@ __PACKAGE__->add_trigger(
     }
 );
 
+__PACKAGE__->add_trigger(
+	BEFORE_DISPATCH => sub {
+		my ($c) = @_;
+		if ($c->is_supported || $c->req->path eq'/non_supported') {
+			return; # nop
+		} else {
+			return $c->redirect('/non_supported');
+		}
+	},
+);
+
+sub is_supported {
+	my ($c) = @_;
+	my $ma = $c->mobile_agent;
+	if ($ma->is_docomo && $ma->browser_version < 2.0 && !$ALLOW_INSECURE_SESSION) {
+		return 0;
+	} elsif ($ma->is_non_mobile) {
+		return 0;
+	} else {
+		return 1;
+	}
+}
 
 # for your security
 __PACKAGE__->add_trigger(
@@ -102,7 +124,7 @@ use String::CamelCase qw(decamelize);
 
 # define roots here.
 my $router = router {
-	connect '/' => {controller => 'Root', action => 'index' };
+	# connect '/' => {controller => 'Root', action => 'index' };
 };
 
 my @controllers = Module::Find::useall('<% $module %>::Mobile::C');
@@ -111,19 +133,20 @@ my @controllers = Module::Find::useall('<% $module %>::Mobile::C');
     for my $controller (@controllers) {
         my $p0 = $controller;
         $p0 =~ s/^<% $module %>::Mobile::C:://;
-        my $p1 = decamelize($p0);
-        next if $p0 eq 'Root';
+        my $p1 = $p0 eq 'Root' ? '' : decamelize($p0) . '/';
 
         for my $method (sort keys %{"${controller}::"}) {
             next if $method =~ /(?:^_|^BEGIN$|^import$)/;
             my $code = *{"${controller}::${method}"}{CODE};
             next unless $code;
             next if get_code_package($code) ne $controller;
-            $router->connect("/$p1/$method" => {
+			my $p2 = $method eq 'index' ? '' : $method;
+			my $path = "/$p1$p2";
+            $router->connect($path => {
                 controller => $p0,
                 action     => $method,
             });
-            print STDERR "map: /$p1/$method => ${p0}::${method}\n" unless $ENV{HARNESS_ACTIVE};
+            print STDERR "map: $path => ${p0}::${method}\n" unless $ENV{HARNESS_ACTIVE};
         }
     }
 }
@@ -152,6 +175,11 @@ use utf8;
 sub index {
     my ($class, $c) = @_;
     $c->render('index.tt');
+}
+
+sub non_supported {
+    my ($class, $c) = @_;
+    $c->render('non_supported.tt');
 }
 
 1;
@@ -194,23 +222,55 @@ builder {
 </html>
 ...
 
+	$self->write_file('tmpl/mobile/non_supported.tt', <<'...');
+<!doctype html>
+<html>
+<head>
+	<title><% dist %></title>
+</head>
+<body>
+	<div>非対応端末です。</div>
+</body>
+</html>
+...
+
 	$self->write_file('t/01_mobile.t', <<'...');
 use strict;
 use warnings;
+use utf8;
 use Test::More;
 use Plack::Test;
 use Plack::Util;
+use t::Util;
 
 my $app = Plack::Util::load_psgi('mobile.psgi');
 test_psgi(
 	app => $app,
 	client => sub {
 		my $cb = shift;
-		my $req = HTTP::Request->new('GET', '/');
-		$req->header('User-Agent' => 'DoCoMo/2.0 N02B(c500;TB;W24H16)');
-		my $res = $cb->($req);
-		is($res->code(), 200) or diag $res->content;
-		like($res->content, qr{DoCoMo});
+		{
+			my $req = HTTP::Request->new('GET', '/');
+			$req->header('User-Agent' => 'KDDI-CA21 UP.Browser/6.0.6 (GUI) MMP/1.1');
+			my $res = $cb->($req);
+			is($res->code(), 200) or diag $res->content;
+			like($res->decoded_content, qr{EZweb});
+			like($res->decoded_content, qr{ﾓﾊﾞｲﾙ}, '半角カタカナフィルタ');
+		}
+		for my $ua (
+			'DoCoMo/1.0/633S/c20',
+			'libwww-perl/6.02',
+		) {
+			subtest $ua =>sub {
+				my $req = HTTP::Request->new('GET', '/');
+				my $res = $cb->($req);
+				is($res->code(), 302) or diag $res->content;
+				like($res->header('Location'), qr{/non_supported$});
+				my $req2 = HTTP::Request->new('GET' => $res->header('Location'));
+				my $res2 = $cb->($req2);
+				is($res2->code, 200) or diag $res->as_string;
+				like($res2->decoded_content, qr{非対応});
+			};
+		}
 	},
 );
 done_testing;
@@ -224,6 +284,7 @@ use Test::More;
 use_ok($_) for qw(
 	<% $module %>::Mobile
 	<% $module %>::Mobile::Dispatcher
+	<% $module %>::Mobile::C::Root
 );
 done_testing;
 ...
@@ -246,4 +307,17 @@ sub create_makefile_pl {
 }
 
 1;
+__END__
+
+=encoding utf8
+
+=head1 NAME
+
+Amon2::Setup::Flavor::MobileJP - MobileJP flavor for Amon2
+
+=head1 DESCRIPTION
+
+ガラケーサイト向けのフレーバーです。普通のガラケーサイトで欲しいなあ、とおもうような機能はあらかじめ実装したコードが生成されるようになっています。
+
+このフレーバーは、Large フレーバーをベースにしています。
 
