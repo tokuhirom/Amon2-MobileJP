@@ -4,7 +4,7 @@ use Module::Install::AuthorTests;
 name 'Amon2-Plugin-Web-MobileAgent';
 all_from 'lib/Amon2/Plugin/Web/MobileAgent.pm';
 
-requires 'Amon2' => 2.33;
+requires 'Amon2' => 3.00;
 requires 'HTTP::MobileAgent';
 requires 'HTTP::MobileAgent::Plugin::Charset';
 requires 'Encode::JP::Mobile';
