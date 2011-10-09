@@ -1,4 +1,8 @@
 Revision history for Perl extension Amon2::Plugin::Web::MobileAgent
 
+0.02
+
+    - MobileJP flavor
+
 0.01    Sat Mar  5 11:22:56 2011
         - original version

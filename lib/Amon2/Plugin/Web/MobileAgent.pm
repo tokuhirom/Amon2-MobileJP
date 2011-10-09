@@ -2,7 +2,7 @@ package Amon2::Plugin::Web::MobileAgent;
 use strict;
 use warnings;
 use 5.008001;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use HTTP::MobileAgent;
 

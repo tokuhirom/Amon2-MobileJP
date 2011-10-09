@@ -11,6 +11,7 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Amon2/Plugin/Web/MobileAgent.pm
 lib/Amon2/Plugin/Web/MobileCharset.pm
+lib/Amon2/Setup/Flavor/MobileJP.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
@@ -19,6 +20,8 @@ README.pod
 t/00_compile.t
 t/01_mobile_agent.t
 t/02_charset.t
+t/03_flavor.t
+t/TestFlavor.pm
 xt/01_podspell.t
 xt/02_perlcritic.t
 xt/03_pod.t
