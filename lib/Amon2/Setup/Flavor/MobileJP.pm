@@ -93,10 +93,25 @@ __PACKAGE__->add_trigger(
 sub is_supported {
 	my ($c) = @_;
 	my $ma = $c->mobile_agent;
-	if ($ma->is_docomo && $ma->browser_version < 2.0 && !$ALLOW_INSECURE_SESSION) {
-		return 0;
+	if ($ma->is_docomo) {
+		if ($ma->browser_version < 2.0 && !$ALLOW_INSECURE_SESSION) {
+			return 0;
+		} elsif ($ma->is_foma) {
+			return 1;
+		} else {
+			return 0; # Mova is not supported
+		}
 	} elsif ($ma->is_non_mobile) {
 		return 0;
+	} elsif ($ma->is_softbank) {
+		if ($ma->is_3gc) {
+			return 1;
+		} else {
+			return 0;
+		}
+	} elsif ($ma->is_ezweb) {
+		# HDML 端末はもう消失したので、すべてサポートでいいでしょう
+		return 1;
 	} else {
 		return 1;
 	}
@@ -179,7 +194,9 @@ sub index {
 
 sub non_supported {
     my ($class, $c) = @_;
-    $c->render('non_supported.tt');
+    $c->render('non_supported.tt', {
+		insecure_session => $<% $module %>::Mobile::ALLOW_INSECURE_SESSION,
+	});
 }
 
 1;
@@ -268,6 +285,13 @@ builder {
 </head>
 <body>
 	<div>非対応端末です。</div>
+	<hr />
+	対応端末は以下のとおりです。
+	<ul>
+	<li>ソフトバンク: 3GC</li>
+	<li>ドコモ: [% insecure_session ? 'FOMA' : 'ドコモブラウザー2.0以後' %]</li>
+	<li>au: WIN</li>
+	</ul>
 </body>
 </html>
 ...
