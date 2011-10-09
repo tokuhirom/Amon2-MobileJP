@@ -8,6 +8,6 @@ requires 'Amon2' => 2.33;
 requires 'HTTP::MobileAgent';
 
 tests 't/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t';
-test_requires 'Test::More' => 0.96; # done_testing, subtest
+test_requires 'Test::More' => 0.98; # done_testing, subtest
 author_tests('xt');
 WriteAll;
