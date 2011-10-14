@@ -1,7 +1,7 @@
 use inc::Module::Install;
 use Module::Install::AuthorTests;
 
-name 'Amon2-Plugin-Web-MobileAgent';
+name 'Amon2-MobileJP';
 all_from 'lib/Amon2/Plugin/Web/MobileAgent.pm';
 
 requires 'Amon2' => '3.03';
