@@ -3,6 +3,7 @@ use Module::Install::AuthorTests;
 
 name 'Amon2-MobileJP';
 all_from 'lib/Amon2/Plugin/Web/MobileAgent.pm';
+abstract 'MobileJP things for Amon2';
 
 requires 'Amon2' => '3.03';
 requires 'HTTP::MobileAgent';
