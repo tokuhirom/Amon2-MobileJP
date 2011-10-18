@@ -26,3 +26,5 @@ nytprof
 perltidy.ERR$
 ^tags$
 ^Amon2-Plugin-Web-MobileAgent-
+^README.mkdn$
+^MYMETA\..*$
