@@ -29,3 +29,12 @@ perltidy.ERR$
 ^README\.mkdn$
 ^MYMETA\..*$
 ^README\.pod$
+^README.pod$
+^README.mkdn$
+^MYMETA\.
+\b_build
+\binc/
+^MANIFEST\.SKIP
+\b\.gitignore
+\.bak$
+^Amon2-MobileJP-
