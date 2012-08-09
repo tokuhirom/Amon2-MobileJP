@@ -1,5 +1,9 @@
 Revision history for Perl extension Amon2::Plugin::Web::MobileAgent
 
+0.06
+
+    - fixed testing issue
+
 0.05
 
     - use MB
