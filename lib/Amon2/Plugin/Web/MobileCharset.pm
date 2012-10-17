@@ -2,7 +2,7 @@ package Amon2::Plugin::Web::MobileCharset;
 use strict;
 use warnings;
 use HTTP::MobileAgent::Plugin::Charset;
-use Encode::JP::Mobile;
+use Encode::JP::Mobile 0.29;
 use Amon2::Util;
 
 sub init {

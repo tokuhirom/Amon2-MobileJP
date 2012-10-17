@@ -12,7 +12,7 @@ my $build = Module::Build->new(
         'perl'                               => '5.8.1',
         'Lingua::JA::Regular::Unicode'       => '0',
         'HTTP::MobileAgent'                  => '0',
-        'Encode::JP::Mobile'                 => '0',
+        'Encode::JP::Mobile'                 => '0.29',
         'Amon2'                              => '3.03',
         'HTTP::MobileAgent::Plugin::Charset' => '0'
     },

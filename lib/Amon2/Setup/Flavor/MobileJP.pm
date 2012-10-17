@@ -408,7 +408,7 @@ sub create_makefile_pl {
             %{ $prereq_pm || {} },
 			'HTTP::MobileAgent' => 0.33,
 			'HTTP::MobileAgent::Plugin::Charset' => 0,
-			'Encode::JP::Mobile' => 0,
+			'Encode::JP::Mobile' => '0.29',
 			'HTTP::Session::Store::DBI' => '0.02',
 			'HTTP::Session' => 0,
 			'Amon2::Plugin::Web::HTTPSession' => 0,
