@@ -1,5 +1,9 @@
 Revision history for Perl extension Amon2::Plugin::Web::MobileAgent
 
+0.07
+
+    - depend to Encode::JP::Mobile 0.29
+
 0.06
 
     - fixed testing issue
