@@ -4,12 +4,18 @@ use utf8;
 
 package Amon2::Setup::Flavor::MobileJP;
 use parent qw(Amon2::Setup::Flavor::Large);
+use Amon2::Setup::Flavor::Minimum;
 
 sub run {
 	my ($self) = @_;
 	$self->SUPER::run();
 
-	$self->write_file("lib/<<PATH>>/Mobile.pm", <<'...', { xslate => $self->create_view(tmpl_path => 'tmpl/mobile')});
+    $self->Amon2::Setup::Flavor::Minimum::create_view(
+        tmpl_path => 'tmpl/mobile',
+        package => $self->{module} . '::Mobile::View',
+        path => "lib/<<PATH>>/Mobile/View.pm",
+    );
+	$self->write_file("lib/<<PATH>>/Mobile.pm", <<'...');
 package <% $module %>::Mobile;
 use strict;
 use warnings;
@@ -23,7 +29,11 @@ sub dispatch {
     return <% $module %>::Mobile::Dispatcher->dispatch($_[0]) or die "response is not generated";
 }
 
-<% $xslate %>
+use <% $module %>::Mobile::View;
+{
+    my $view = <% $module %>::Mobile::View->make_instance(__PACKAGE__);
+    sub create_view { $view }
+}
 
 our $ALLOW_INSECURE_SESSION = 0;
 
