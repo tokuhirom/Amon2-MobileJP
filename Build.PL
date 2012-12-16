@@ -13,7 +13,7 @@ my $build = Module::Build->new(
         'Lingua::JA::Regular::Unicode'       => '0',
         'HTTP::MobileAgent'                  => '0',
         'Encode::JP::Mobile'                 => '0.29',
-        'Amon2'                              => '3.03',
+        'Amon2'                              => '3.66',
         'HTTP::MobileAgent::Plugin::Charset' => '0'
     },
     no_index    => { 'directory' => [ 'inc', 't', 'xt' ] },
