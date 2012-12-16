@@ -1,5 +1,10 @@
 Revision history for Perl extension Amon2::Plugin::Web::MobileAgent
 
+0.09
+
+    - fixed setup flavor.
+      It was broken by Amon2 core's update.
+
 0.08
 
     - no feature changes.
