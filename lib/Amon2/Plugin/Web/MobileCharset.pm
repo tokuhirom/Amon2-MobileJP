@@ -27,7 +27,7 @@ __END__
 
 =head1 NAME
 
-Amon2::Plugin::Web::MobileCharset - Amon2 plugin for Japanese mobile phone's charset
+Amon2::Plugin::Web::MobileCharset - Amon2 plugin for Japanese mobile phone's character set
 
 =head1 SYNOPSIS
 

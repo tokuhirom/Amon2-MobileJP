@@ -14,6 +14,11 @@ sub run {
         tmpl_path => 'tmpl/mobile',
         package => $self->{module} . '::Mobile::View',
         path => "lib/<<PATH>>/Mobile/View.pm",
+        view_functions_package => $self->{module} . '::Mobile::ViewFunctions',
+    );
+    $self->Amon2::Setup::Flavor::Minimum::create_view_functions(
+        package => $self->{module} . '::Mobile::ViewFunctions',
+        path => "lib/<<PATH>>/Mobile/ViewFunctions.pm",
     );
 	$self->write_file("lib/<<PATH>>/Mobile.pm", <<'...');
 package <% $module %>::Mobile;
@@ -430,6 +435,8 @@ sub create_makefile_pl {
 
 1;
 __END__
+
+=for stopwords MobileJP
 
 =encoding utf8
 

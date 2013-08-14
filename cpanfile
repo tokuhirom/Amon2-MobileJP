@@ -1,6 +1,6 @@
 requires 'perl', 'v5.8.1';
 
-requires 'Amon2', '3.66';
+requires 'Amon2', '3.86';
 requires 'Amon2::Setup::Flavor::Large';
 requires 'Amon2::Setup::Flavor::Minimum';
 requires 'Amon2::Util';

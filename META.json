@@ -42,7 +42,7 @@
       },
       "runtime" : {
          "requires" : {
-            "Amon2" : "3.66",
+            "Amon2" : "3.86",
             "Amon2::Setup::Flavor::Large" : "0",
             "Amon2::Setup::Flavor::Minimum" : "0",
             "Amon2::Util" : "0",
@@ -81,7 +81,7 @@
          "web" : "https://github.com/tokuhirom/Amon2-MobileJP"
       }
    },
-   "version" : "0.09",
+   "version" : "0.10",
    "x_contributors" : [
       "tokuhirom <tokuhirom@gmail.com>"
    ]

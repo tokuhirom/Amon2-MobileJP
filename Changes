@@ -1,5 +1,14 @@
 Revision history for Perl extension Amon2::Plugin::Web::MobileAgent
 
+{{$NEXT}}
+
+0.10 2013-08-14T01:53:36Z
+
+    - minil migrate
+      (tokuhirom)
+    - Fixed setup script around ViewFunctions.
+      (tokuhirom)
+
 0.09
 
     - fixed setup flavor.
