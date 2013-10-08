@@ -2,6 +2,13 @@ Revision history for Perl extension Amon2::Plugin::Web::MobileAgent
 
 {{$NEXT}}
 
+0.11 2013-10-08T23:40:47Z
+
+    - I retired to maintain flavors for Japanese mobile phones.
+      We will not create any sites for Japanese mobile phones!
+      But, if you want to maintain this module, I can pass the maintainership.
+      (tokuhirom)
+
 0.10 2013-08-14T01:53:36Z
 
     - minil migrate
